@@ -1,0 +1,8 @@
+appId: com.example.overlay
+productName: PS99 Clan Wars Overlay
+directories:
+  output: dist
+files:
+  - "**/*"
+win:
+  target: portable

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="title" content="PS99 Clan Quests">
+    <meta name="description" content="By Dalk21">
+    <meta name="theme-color" content="#ffffff">
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="PS99 Clan Quests">
+    <meta property="og:description" content="By Dalk21">
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="PS99 Clan Quests">
+    <meta property="twitter:description" content="By Dalk21">
+    <title>Clan Quests Overlay | CLAN NAME | 1.0.0</title>
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1 id="title">Clan Quests Overlay</h1> Powered by the <a href="https://docs.biggamesapi.io/" style="color:white">Pet Simulator 99 API</a>
+      <br>
+      <a id="updated">Last updated not now</a>
+      <br>
+      <a id="clan">Clan Rank: #99 | Clan Points: 99</a>
+      <br>
+      <button onclick="changeOverlay()" style="background-color:rgb(40,40,40);color:white;">Change Overlay</button>
+      <table id="overlayzero">
+        <thead>
+          <tr>
+            <th>Quest Challenge</th>
+            <th>Progress</th>
+            <th>Stars</th>
+          </tr>
+        </thead>
+        <tbody id="questsData">
+          <tr>
+            <td id="qc0">Fix 99 Bugs</td>
+            <td id="p0">0/99</td>
+            <td id="s0">99</td>
+          </tr>
+          <tr>
+            <td id="qc1">Fix 99 Bugs</td>
+            <td id="p1">0/99</td>
+            <td id="s1">99</td>
+          </tr>
+          <tr>
+            <td id="qc2">Fix 99 Bugs</td>
+            <td id="p2">0/99</td>
+            <td id="s2">99</td>
+          </tr>
+          <tr>
+            <td id="qc3">Fix 99 Bugs</td>
+            <td id="p3">0/99</td>
+            <td id="s3">99</td>
+          </tr>
+        </tbody>
+      </table>
+      <p id="overlayone" hidden></p>
+    </div>
+    <script>
+      const clanTag = "UNTY"
+      const apiUrl = "https://example.com/"
+      document.addEventListener("DOMContentLoaded", run);
+      let whatOverlay = 0
+
+      setInterval(() => {
+        run()
+      }, 60000);
+
+      function changeOverlay() {
+        if (whatOverlay == 0) {
+          whatOverlay = 1
+          document.getElementById('overlayzero').hidden = true
+          document.getElementById('overlayone').hidden = false
+          document.getElementById('title').innerText = "Clan Points Leaderboard"
+        } else {
+          whatOverlay = 0
+          document.getElementById('overlayzero').hidden = false
+          document.getElementById('overlayone').hidden = true
+          document.getElementById('title').innerText = "Clan Quests Overlay"
+        }
+        run()
+      }
+
+      async function getClanDetails(clanName) {
+        const url = `${apiUrl}/api/unity`;
+        try {
+          const response = await fetch(url);
+          const data = await response.json();
+          if (!response.ok || data.status !== 'ok') {
+            throw new Error(`Failed to fetch details for clan '${clanName}'`);
+          }
+          return data.data;
+        } catch (error) {
+          throw new Error(`Error in getClanDetails: ${error.message}`);
+        }
+      }
+
+      async function getChallenges() {
+        const url = `${apiUrl}/challenges.json`;
+        try {
+          const response = await fetch(url);
+          const data = await response.json();
+          if (!response.ok || data.status !== 'ok') {
+            throw new Error('Failed to fetch challlenges');
+          }
+          return data.data;
+        } catch (error) {
+          throw new Error(`Error in getChallenges: ${error.message}`);
+        }
+      }
+
+      async function getClans(page, pageSize, sort, sortOrder) {
+        const url = `${apiUrl}/api/clans`;
+        try {
+          const response = await fetch(url);
+          const data = await response.json();
+          if (!response.ok || data.status !== 'ok') {
+            throw new Error('Failed to fetch clans');
+          }
+          return data.data;
+        } catch (error) {
+          throw new Error(`Error in getClans: ${error.message}`);
+        }
+      }
+
+      async function getUsernameFromId(id) {
+        const url = `${apiUrl}/api/ids?id=${id}`;
+        try {
+          const response = await fetch(url);
+          const data = await response.json();
+          return data;
+        } catch (error) {
+          throw new Error(`Error in getUsernameFromId: ${error.message}`);
+        }
+      }
+
+      let clanRank = null
+
+      async function run() {
+        if (whatOverlay == 0) {
+          getClans().then(clans => {
+            clans.sort((a, b) => b.Points - a.Points);
+            // Find the position of the clan
+            const position = clans.findIndex(clan => clan.Name === "UNTY");
+            if (position !== -1) {
+              clanRank = position + 1
+            } else {}
+          })
+
+          getClanDetails('UNTY').then(async clanDetails => {
+            async function getQuestNameFromType(type) {
+              const listd = await fetch('${apiUrl}/challenges.json')
+              const list = await listd.json()
+              try {
+                if (list[type]) {
+                  return list[type]
+                } else {
+                  return "Unknown Quest"
+                }
+              } catch {
+                return "Unknown Quest"
+              }
+            }
+
+            document.getElementById("qc0").innerText = `${await getQuestNameFromType(clanDetails.Battles.GoalBattleOne.Goals[0].Type)}`
+            document.getElementById("p0").innerText = `${clanDetails.Battles.GoalBattleOne.Goals[0].Progress.toLocaleString()}/${clanDetails.Battles.GoalBattleOne.Goals[0].Amount.toLocaleString()}`
+            document.getElementById("s0").innerText = `${clanDetails.Battles.GoalBattleOne.Goals[0].Stars}`
+            document.getElementById("qc1").innerText = `${await getQuestNameFromType(clanDetails.Battles.GoalBattleOne.Goals[1].Type)}`
+            document.getElementById("p1").innerText = `${clanDetails.Battles.GoalBattleOne.Goals[1].Progress.toLocaleString()}/${clanDetails.Battles.GoalBattleOne.Goals[1].Amount.toLocaleString()}`
+            document.getElementById("s1").innerText = `${clanDetails.Battles.GoalBattleOne.Goals[1].Stars}`
+            document.getElementById("qc2").innerText = `${await getQuestNameFromType(clanDetails.Battles.GoalBattleOne.Goals[2].Type)}`
+            document.getElementById("p2").innerText = `${clanDetails.Battles.GoalBattleOne.Goals[2].Progress.toLocaleString()}/${clanDetails.Battles.GoalBattleOne.Goals[2].Amount.toLocaleString()}`
+            document.getElementById("s2").innerText = `${clanDetails.Battles.GoalBattleOne.Goals[2].Stars}`
+            document.getElementById("qc3").innerText = `${await getQuestNameFromType(clanDetails.Battles.GoalBattleOne.Goals[3].Type)}`
+            document.getElementById("p3").innerText = `${clanDetails.Battles.GoalBattleOne.Goals[3].Progress.toLocaleString()}/${clanDetails.Battles.GoalBattleOne.Goals[3].Amount.toLocaleString()}`
+            document.getElementById("s3").innerText = `${clanDetails.Battles.GoalBattleOne.Goals[3].Stars}`
+            document.getElementById("clan").innerText = `Clan Rank: #${clanRank} | Clan Points: ${Object.values(clanDetails.Battles)[Object.values(clanDetails.Battles).length - 1].Points.toLocaleString()}`
+            document.getElementById("updated").innerText = `Last Updated: ${new Date().toLocaleTimeString()}`
+          
+          }).catch(error => {
+            console.error('Error:', error.message);
+          });
+        } else {
+          function getTopPoints(jsonInput, X) {
+            const data = jsonInput
+            // Sort users by points in descending order
+            const sortedUsers = data.sort((a, b) => b.Points - a.Points);
+            const topUsers = [];
+            // Add top X users and assign ranks
+            for (let i = 0; i < X && i < sortedUsers.length; i++) {
+              const user = sortedUsers[i];
+              topUsers.push({
+                ...user,
+                rank: i + 1
+              });
+            }
+            return topUsers;
+          }
+
+          let leaderboard = ""
+
+          getClanDetails('UNTY').then(async clanDetails => {
+            const topUsers = getTopPoints(Object.values(clanDetails.Battles)[Object.values(clanDetails.Battles).length - 1].PointContributions, 10);
+            for (const user of topUsers) {
+              const newId = await getUsernameFromId(user.UserID)
+              leaderboard += `Rank #${user.rank}: 
+																	<b>${newId.name}</b> with 
+																	<b>${user.Points}</b> ⭐
+																	<br>`
+            };
+
+            document.getElementById('overlayone').innerHTML = leaderboard
+            
+          })
+        }
+      }
+    </script>
+  </body>
+</html>
