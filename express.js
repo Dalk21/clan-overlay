@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express()
 const path = require('path')
-const clanTag = "UNTY"
+const clanTag = "UNTY" // put your clan tag here :D
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/overlay.html'));
@@ -41,9 +41,9 @@ app.get('/api/ids', async (req, res) => {
     }
 });
 
-app.get(`/api/${clanTag}`, async (req, res) => {
+app.get(`/api/:clan`, async (req, res) => {
     try {
-        const apiUrl = `https://biggamesapi.io/api/clan/${clanTag}`;
+        const apiUrl = `https://biggamesapi.io/api/clan/${req.params.clan}`;
         const response = await fetch(apiUrl);
         const data = await response.json();
         res.json(data);
