@@ -12,7 +12,7 @@ To build (for Windows), run `npx electron-builder`
 
 To build (for macOS), run `npx electron-builder --mac --universal`
 
-SUPPORT: Email me at dalk@dalk.xyz or DM me on Discord @dalked.
+SUPPORT: Email me at dalk@dalk.xyz or DM me on Discord @dalked (If you are top 10 and dont have much coding knowledge, please DM me).
 
 Feel free to edit the code, we encourage it.
 ## Screenshots
