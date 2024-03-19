@@ -8,7 +8,9 @@ Powered by the Pet Simulator 99 API.
 
 Used by top clans such as: DRFT (#2), A2H (#3), and Unity (#6).
 
-To build, run `npx electron-builder`
+To build (for Windows), run `npx electron-builder`
+
+To build (for macOS), run `npx electron-builder --mac --universal`
 
 SUPPORT: Email me at dalk@dalk.xyz or DM me on Discord @dalked.
 
