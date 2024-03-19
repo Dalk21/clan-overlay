@@ -2,19 +2,10 @@ const express = require('express')
 const app = express()
 const path = require('path')
 const clanTag = "UNTY" // put your clan tag here :D
+const port = 3000
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '/overlay.html'));
-});
-
-app.get('/overlay.exe', (req, res) => {
-    res.sendFile(path.join(__dirname, '/overlay.exe'));
-    console.log('Overlay downloaded')
-});
-
-app.get('/overlay.zip', (req, res) => {
-    res.sendFile(path.join(__dirname, '/overlay.zip'));
-    console.log('Overlay downloaded')
+    res.send('Clan API Overlay')
 });
 
 app.get('/api/clans', async (req, res) => {
@@ -53,6 +44,5 @@ app.get(`/api/:clan`, async (req, res) => {
     }
 });
 
-const chalk = require('chalk')
-console.log(`[WEB MOUNT] Clan Overlay Host has loaded`)
-module.exports = {app}
+console.log(`[WEB MOUNT] Clan Overlay API has loaded`)
+app.listen(port)
